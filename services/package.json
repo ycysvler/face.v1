@@ -1,15 +1,10 @@
 {
-  "name": "patent-web",
-  "version": "5.0.0",
+  "name": "face",
+  "version": "1.0.0",
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "server": "nodemon server/app.js",
-    "model": "nodemon model/routers/server.js",
-    "hamaster": "nodemon hamaster/server.js",
-    "basedata": "nodemon basedata/server.js",
-    "datasync": "nodemon datasync/server.js"
+    "server": "nodemon server.js"
   },
   "keywords": [],
   "author": "",
