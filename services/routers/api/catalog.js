@@ -8,17 +8,21 @@ const catalogLogic = new CatalogLogic();
 
 module.exports = function (router) {
     router.get('/catalog', async (ctx) => {
-        ctx.body = {
-            code: 200,
-            date: moment().format("YYYY-MM-DD hh:mm:ss")
-        };
+        let items = await catalogLogic.list();
+        ctx.body = { code: 200, data: items };
     });
 
     router.post('/catalog', async (ctx) => {
-        let ok = tools.required(ctx, ['name']);
+        let ok = tools.required(ctx, ["id","name","parentid","desc"]);
         if (ok) {
-            let item = await catalogLogic.create(ctx.body);
+            let item = await catalogLogic.create(ctx.request.body);
             ctx.body = {code: 200, data: item};
         }
+    });
+
+    router.delete('/catalog', async(ctx)=>{
+        let items = await catalogLogic.removeByIds(ctx.request.body);
+        ctx.body = {code: 200, data: items};
+
     });
 };

@@ -16,10 +16,20 @@ module.exports = class Schemas {
             parentid: {type: String},                                       // 上级ID
             name: String,                                                   // 目录名称
             desc:String,                                                    // 描述信息
-            images:Array,                                                   // 人像图片信息集合
             updatetime: {type: Date, index: true}                           // 更新时间
         });
         this.Catalog = conn.model('Catalog', this.catalogSchema);
+
+        // 任务图像
+        this.catalogImageSchema = new mongoose.Schema({
+            cid: {type: String, index: true},                               // 人像目录ID
+            name: String,                                                   // 人像图片名称
+            source:Buffer,                                                  // 原始图像
+            feature:Buffer,                                                 // 人脸特征
+            desc:String,                                                    // 描述信息
+            updatetime: {type: Date, index: true}                           // 更新时间
+        });
+        this.CatalogImage = conn.model('CatalogImage', this.catalogImageSchema);
 
 
         // 视频库
