@@ -7,7 +7,7 @@
 module.exports = {
     // mongodb 相关配置
     mongodb: {
-        uri: 'mongodb://192.168.1.105/',
+        uri: 'mongodb://10.211.55.7/',
         options: {
             server: {socketOptions: {keepAlive: 1}},
             replset: {socketOptions: {keepAlive: 1}}
