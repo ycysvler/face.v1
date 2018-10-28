@@ -1,0 +1,5 @@
+{
+  "name":"patent",
+  "titleSuffix": " - 人像识别平台",
+  "server":"http://localhost:4001"
+}
