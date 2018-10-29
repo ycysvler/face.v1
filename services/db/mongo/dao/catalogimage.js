@@ -39,14 +39,14 @@ module.exports = class CatalogImageLogic {
         });
     }
 
-    list(){
+    list(cid){
         return new Promise((resolve, reject) => {
             let doc = getMongoPool().CatalogImage;
-            doc.find().sort({parentid:1}).exec(function (err, Item) {
+            doc.find({cid:cid}).sort({updatetime:1}).exec(function (err, Items) {
                 if (err) {
                     reject(err);
                 } else {
-                    resolve(Item);
+                    resolve(Items);
                 }
             });
         });
@@ -55,7 +55,7 @@ module.exports = class CatalogImageLogic {
     removeByIds(ids) {
         return new Promise((resolve, reject) => {
             let doc = getMongoPool().CatalogImage;
-            doc.deleteMany({id: {$in: ids}}, function (err, Item) {
+            doc.deleteMany({_id: {$in: ids}}, function (err, Item) {
                 if (err) {
                     reject(err);
                 } else {

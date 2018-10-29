@@ -14,11 +14,12 @@ const catalogLogic = new CatalogLogic();
 const catalogImageLogic = new CatalogImageLogic();
 
 module.exports = function (router) {
+    // 获取分组列表
     router.get('/catalog', async (ctx) => {
         let items = await catalogLogic.list();
         ctx.body = { code: 200, data: items };
     });
-
+    // 添加分组
     router.post('/catalog', async (ctx) => {
         let ok = tools.required(ctx, ["id","name","parentid","desc"]);
         if (ok) {
@@ -26,13 +27,28 @@ module.exports = function (router) {
             ctx.body = {code: 200, data: item};
         }
     });
-
+    // 删除分组
     router.delete('/catalog', async(ctx)=>{
         let items = await catalogLogic.removeByIds(ctx.request.body);
         ctx.body = {code: 200, data: items};
     });
-
-    router.get('/catalog/image/:name', async (ctx) => {
+    // 删除图片
+    router.delete('/catalog/images', async(ctx)=>{
+        let items = await catalogImageLogic.removeByIds(ctx.request.body);
+        ctx.body = {code: 200, data: items};
+    });
+    // 获取分组下的图片列表
+    router.get('/catalog/images/:cid', async (ctx) => {
+        let ok = tools.required(ctx, ['cid']);
+        console.log(ctx.params.cid);
+        if (ok) {
+            let cid = ctx.params.cid;
+            let items = await catalogImageLogic.list(cid);
+            ctx.body = { code: 200, data: items };
+        }
+    });
+    // 获取图片内容
+    router.get('/catalog/source/:name', async (ctx) => {
         let ok = tools.required(ctx, ['name']);
         console.log(ctx.params.name);
         if (ok) {
@@ -41,9 +57,9 @@ module.exports = function (router) {
             ctx.body = item.source;
         }
     });
-
-    router.post('/catalog/image', async (ctx) => {
-        let ok = tools.required(ctx, ["cid","desc"]);
+    // 上传图片
+    router.post('/catalog/source', async (ctx) => {
+        let ok = tools.required(ctx, ["cid"]);
         if (ok) {
             let cid = ctx.request.query['cid'];
             let desc = ctx.request.query['desc'];
@@ -67,7 +83,7 @@ module.exports = function (router) {
             // 删掉上传的临时文件
             fs.unlink(f.path,()=>{});
 
-            ctx.body = {code: 200, data: filename};
+            ctx.body = {status:"success", code: 200, data: filename};
         }
     });
 };
