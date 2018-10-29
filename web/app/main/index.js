@@ -4,6 +4,8 @@ import {HashRouter as Router,Link, Switch, Route} from 'react-router-dom';
 import NotFound from '../notfound';
 import './main.less';
 import FaceList from '../face/list';
+import VideoList from '../video/list';
+import JobList from '../job/list';
 import FaceGroupList from '../facegroup/list';
 const SubMenu = Menu.SubMenu;
 const MenuItemGroup = Menu.ItemGroup;
@@ -26,11 +28,11 @@ export default class CentrePlatform extends React.Component {
                         <Layout style={{"background": "white"}}>
                             <Content>
                                 <Menu mode="horizontal" >
-                                    <SubMenu key="sub2" title={<span><Icon type="bulb" /><span>视频库</span></span>}>
-                                        <Menu.Item key="monitor"><Link to='/centre/monitor'><span>视频库管理</span></Link></Menu.Item>
+                                    <SubMenu key="sub2" title={<span><Icon type="bulb" /><span>视频库管理</span></span>}>
+                                        <Menu.Item key="monitor"><Link to='/main/video'><span>视频库</span></Link></Menu.Item>
                                     </SubMenu>
-                                    <SubMenu key="sub1" title={<span><Icon type="appstore-o" /><span>人脸库</span></span>}>
-                                        <Menu.Item key="org"><Link to='/main/facegroup'><span>分组库管理</span></Link></Menu.Item>
+                                    <SubMenu key="sub1" title={<span><Icon type="appstore-o" /><span>人脸库管理</span></span>}>
+                                        <Menu.Item key="org"><Link to='/main/facegroup'><span>分组库</span></Link></Menu.Item>
                                     </SubMenu>
                                 </Menu>
                             </Content>
@@ -47,7 +49,9 @@ export default class CentrePlatform extends React.Component {
                     <Router>
                         <Switch>
                             <Route path="/main/facegroup" component={FaceGroupList}/>
+                            <Route path="/main/video" component={VideoList}/>
                             <Route path="/main/face/:id" component={FaceList}/>
+                            <Route path="/main/job/:id/:name" component={JobList}/>
                             <Route component={NotFound}/>
                         </Switch>
                     </Router>

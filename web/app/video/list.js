@@ -2,20 +2,22 @@
  * Created by yanggang on 2017/3/6.
  */
 import React from 'react';
+import Config from 'config';
 import {Link} from 'react-router-dom';
-import {Layout,  Modal, Table, Breadcrumb, Button, Row, Col, Input} from 'antd';
-import {FaceStore, FaceActions} from './reflux.js';
+import {Layout, Popover, Modal,Upload, Table, Breadcrumb, Button, Row, Col, Input, Icon} from 'antd';
+import {VideoStore, VideoActions} from './reflux.js';
 const {Header, Content} = Layout;
 
-export default class FaceGroupList extends React.Component {
+export default class FaceList extends React.Component {
     constructor(props) {
         super(props);
-        this.unsubscribe = FaceStore.listen(this.onStatusChange.bind(this));
-        this.state = {items: [], deleteBtnEnable: false, newItem: {}};
+        console.log('id -> ', props.match.params.id);
+        this.unsubscribe = VideoStore.listen(this.onStatusChange.bind(this));
+        this.state = {cid:props.match.params.id,items: [], deleteBtnEnable: false, newItem: {},fileList:[]};
     }
 
     componentDidMount() {
-        FaceActions.list();
+        VideoActions.list(this.state.cid);
     }
 
     componentWillUnmount() {
@@ -28,28 +30,34 @@ export default class FaceGroupList extends React.Component {
             this.setState({items: data.list, deleteBtnEnable: false, total: data.total});
         }
         if (type === 'delete') {
-            FaceActions.list();
+            VideoActions.list(this.state.cid);
         }
-        if (type === 'add') {
-            FaceActions.list();
-        }
+    };
+
+    handleClick = (e) => {
+        this.setState({
+            current: e.key,
+        });
     };
 
     deleteClick = () => {
         console.log('selectedRowKeys', this.state.selectedRowKeys);
-        FaceActions.delete(this.state.selectedRowKeys);
+        VideoActions.delete(this.state.selectedRowKeys);
     };
 
     columns = [
         {
             title: '编号',
-            dataIndex: 'id',
-            render: (text) => {return <Link to={"/main/face/" + text} >{text}</Link>},
+            dataIndex: '_id',
+            width:240,
+
         },
         {
             title: '名称',
             dataIndex: 'name',
+            render: (text, info) => {return <Link to={"/main/job/" + info._id + "/" + info.name} >{info.name}</Link>},
         },
+
         {
             title: '描述',
             dataIndex: 'desc',
@@ -81,7 +89,7 @@ export default class FaceGroupList extends React.Component {
     };
 
     onPageChange = (pageNumber) => {
-        FaceActions.getList(pageNumber, 10);
+        VideoActions.getList(pageNumber, 10);
     };
 
     // 显示添加组的弹窗
@@ -94,7 +102,7 @@ export default class FaceGroupList extends React.Component {
     handleOk = (e) => {
         let item = this.state.newItem;
         item.parentid = "0";
-        FaceActions.add(item);
+        VideoActions.add(item);
         this.setState({visible: false, newItem: {}});
     };
     // 取消添加组的弹窗
@@ -105,23 +113,59 @@ export default class FaceGroupList extends React.Component {
         });
     };
 
+    handleChange =(info)=>{
+        let fileList = info.fileList;
+        this.setState({ fileList:fileList});
+        console.log(fileList);
+        if(info.file.status === "done"){
+            this.state.visible = false;
+            this.state.fileList = [];
+            this.state.newItem = {};
+            FaceActions.list(this.state.cid);
+        }
+    };
+
     render() {
+        const uploadButton = (
+            <div>
+                <Icon type="plus" />
+                <div className="ant-upload-text">Upload</div>
+            </div>
+        );
         return (<Layout>
                 <Breadcrumb className="breadcrumb">
-                    <Breadcrumb.Item>人像库</Breadcrumb.Item>
-                    <Breadcrumb.Item>分组库管理</Breadcrumb.Item>
+                    <Breadcrumb.Item>视频库管理</Breadcrumb.Item>
+                    <Breadcrumb.Item>视频库</Breadcrumb.Item>
                 </Breadcrumb>
+
+                {/*<Button onClick={()=>{*/}
+                    {/*let Media = this.refs.video;*/}
+                    {/*Media.pause();*/}
+                    {/*Media.currentTime = 5.490753;*/}
+                    {/*Media.play();*/}
+
+                {/*}}>*/}
+                    {/*lalala*/}
+                {/*</Button>*/}
+
+            {/*<video id="video" ref="video" className="video-js vjs-default-skin vjs-fluid"*/}
+                   {/*style={{width:675, height:400}}*/}
+                   {/*poster="http://vjs.zencdn.net/v/oceans.png"*/}
+                   {/*controls preload="Metadata"*/}
+                   {/*data-setup='{ "html5" : { "nativeTextTracks" : false } }'>*/}
+                {/*<source src="http://localhost:4001/videos/mov_bbb.mp4" type="video/mp4"/>*/}
+            {/*</video>*/}
 
                 <Layout className="list-content">
                     <Header className="list-header">
-                        <Button type="primary" onClick={this.showModal}>添加分组</Button>
+                        <Button type="primary" onClick={this.showModal}>添加视频</Button>
                         <Button type="danger" disabled={!this.state.deleteBtnEnable} onClick={this.deleteClick}
-                                style={{marginLeft: 16}}>删除分组</Button>
+                                style={{marginLeft: 16}}>删除视频</Button>
                     </Header>
                     <Content >
                         <Table
                             className="bg-white"
-                            rowKey="id"
+                            rowKey="_id"
                             rowSelection={this.rowSelection} columns={this.columns} dataSource={this.state.items}
                             pagination={{
                                 showSizeChanger: true,
@@ -132,46 +176,15 @@ export default class FaceGroupList extends React.Component {
                             }} size="middle"/>
 
                         <Modal
-                            className="modify"
-                            title="新建分组"
-                            visible={this.state.visible}
                             onOk={this.handleOk}
                             onCancel={this.handleCancel}
-                            footer={[
-                                <Button key="submit" type="primary" onClick={this.handleOk}>
-                                    确认
-                                </Button>,
-                                <Button key="back" onClick={this.handleCancel}>取消</Button>,
-                            ]}
+                            className="modify"
+                            title="添加人像"
+                            visible={this.state.visible}
+                            footer={null}
                         >
                             <Row >
-                                <Col offset={2} span={4} className="title">编号</Col>
-                                <Col offset={2} span={13}>
-                                    <Input
-                                        value={this.state.newItem.id}
-                                        onChange={(e) => {
-                                            let item = this.state.newItem;
-                                            item.id = e.target.value;
-                                            this.setState({newItem: item});
-                                        }}/>
-                                </Col>
-                            </Row>
-                            <Row><Col span={24}>&nbsp;</Col></Row>
-                            <Row >
-                                <Col offset={2} span={4} className="title">分组名称</Col>
-                                <Col offset={2} span={13}>
-                                    <Input
-                                        value={this.state.newItem.name}
-                                        onChange={(e) => {
-                                            let item = this.state.newItem;
-                                            item.name = e.target.value;
-                                            this.setState({newItem: item});
-                                        }}/>
-                                </Col>
-                            </Row>
-                            <Row><Col span={24}>&nbsp;</Col></Row>
-                            <Row >
-                                <Col offset={2} span={4} className="title">分组描述</Col>
+                                <Col offset={2} span={4} className="title">描述</Col>
                                 <Col offset={2} span={13}>
                                     <Input
                                         value={this.state.newItem.desc}
@@ -182,6 +195,23 @@ export default class FaceGroupList extends React.Component {
                                         }}/>
                                 </Col>
                             </Row>
+                            <Row><Col span={24}>&nbsp;</Col></Row>
+                            <Row >
+                                <Col offset={2} span={4} className="title">上传人像</Col>
+                                <Col offset={2} span={13}>
+                                    <Upload
+                                        action={Config.server + `/face/api/catalog/source?cid=${this.state.cid}&desc=${this.state.newItem.desc}`}
+                                        listType="picture-card"
+                                        fileList={this.state.fileList}
+                                        onChange={this.handleChange}
+                                    >
+                                        {this.state.fileList.length >= 1 ? null : uploadButton}
+                                    </Upload>
+                                </Col>
+                            </Row>
+
+
+
                         </Modal>
                     </Content>
                 </Layout>
