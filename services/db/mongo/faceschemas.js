@@ -37,6 +37,8 @@ module.exports = class Schemas {
             id: {type: String, index: {unique: true, dropDups: true}},      // video id
             group: {type: String},                                          // 将来视频是分布式存储的，这个Group代表在哪
             name: {type: String},                                           // 视频名称
+            fps: {type: Number},                                            // FPS
+            length: {type: Number},                                         // 视频长度
             desc: String,                                                   // 描述信息
             updatetime: {type: Date, index: true}                           // 更新时间
         });
@@ -45,18 +47,30 @@ module.exports = class Schemas {
         // 视频帧
         this.videoSourceFrameSchema = new mongoose.Schema({
             vid: {type: String, index: true},                               // video id
+            frameno: {type: Number},                                        // 帧号
             time: {type: Number},                                           // 这一帧所在的时间：秒
-            source: Buffer,                                                 // 原始图像
-            feature: Buffer                                                 // 人脸特征
+            source: Buffer,                                                 // 原始大图
+            faces: Array                                                    // [{trackid 轨迹，source 脸图，location 位置，feature 特征}]
         });
+
+        this.videoSourceFrameSchema.index({vid: 1, frameno: 1});
         this.VideoSourceFrame = conn.model('VideoSourceFrame', this.videoSourceFrameSchema);
+
+        // 查询任务
+        this.jobSchema = new mongoose.Schema({
+            vid: {type: String, index: true},                               // 视频ID
+            name: {type: String},                                           // 视频名称
+            desc: String,                                                   // 描述信息
+            updatetime: {type: Date, index: true}                           // 更新时间
+        });
+        this.Job = conn.model('Job', this.jobSchema);
 
         // 关键帧
         this.videoKeyFrameSchema = new mongoose.Schema({
-            vid: {type: String, index: true},                               // video id
+            jid: {type: String, index: true},                               // JobID
+            frameno: {type: Number},                                        // 帧号
             time: {type: Number},                                           // 这一帧所在的时间：秒
-            source: Buffer,                                                 // 原始图像
-            feature: Buffer                                                 // 人脸特征
+            res : Array                                                     // [trackid,source,cid 人物图像ID]
         });
         this.VideoKeyFrame = conn.model('VideoKeyFrame', this.videoKeyFrameSchema);
     }
