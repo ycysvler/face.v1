@@ -138,6 +138,12 @@ export default class JobList extends React.Component {
         }
     };
 
+    onProgress=(time)=>{
+        // 视频条转滚动态条
+        let Media = this.refs.video;
+        Media.currentTime = time;
+    }
+
     render() {
         const uploadButton = (
             <div>
@@ -196,7 +202,7 @@ export default class JobList extends React.Component {
                             </Col>
                         </Row>
                         <Card >
-                            <Progress />
+                            <Progress onProgress={this.onProgress} />
                         </Card>
 
                     </Layout>

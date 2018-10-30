@@ -36,13 +36,7 @@ module.exports = {
             port: 4001                          // 服务启动端口号
         },
         web:{
-            port: 4010                          // 服务启动端口号
-        },
-        hamaster:{
-            port: 4999                          // 服务启动端口号
-        },
-        datasync:{
-            port: 4998                          // 服务启动端口号
+            port: 4002                          // 服务启动端口号
         }
     },
 
