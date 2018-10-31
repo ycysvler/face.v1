@@ -17,11 +17,7 @@ export default class progress extends React.Component {
         this.state = {
             video: {length: 10},
             onProgress : props.onProgress,
-            frames: [
-                {time: 5, progress: 50},
-                {time: 6, progress: 60},
-                {time: 8, progress: 80}
-            ]
+            frames: []
         };
     }
 
@@ -29,6 +25,21 @@ export default class progress extends React.Component {
     }
 
     componentWillUnmount() {
+    }
+
+    componentWillReceiveProps(newProps){
+        if(newProps.frames.length > 0 && newProps.duration > 0){
+            this.state.duration = newProps.duration;
+            let items = [];
+
+            for(let item of newProps.frames){
+                // 这里有个问题，这个视频的长度是多少
+                item.progress = item.time * 100 / this.state.duration;
+                items.push(item);
+            }
+
+            this.setState({frames:items});
+        }
     }
 
     onProgress=(frames)=>{
@@ -41,7 +52,7 @@ export default class progress extends React.Component {
         return (<div className="progress-bg">
                 {
                     this.state.frames.map((item, index)=>{
-                       return  <div key={item.time} onClick={this.onProgress.bind(this,item)} className="bar" style={{left: item.progress + '%'}}></div>
+                       return  <div key={index} onClick={this.onProgress.bind(this,item)} className="bar" style={{left: item.progress + '%'}}></div>
                     })
                 }
             </div>

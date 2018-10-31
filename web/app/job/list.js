@@ -7,6 +7,7 @@ import {Link} from 'react-router-dom';
 import Progress from './progress';
 import {Layout, Modal, Upload, Table, Breadcrumb, Button, Row, Col, Card, Input, Icon} from 'antd';
 import {VideoStore, VideoActions} from './reflux.js';
+
 const {Header, Content} = Layout;
 
 export default class JobList extends React.Component {
@@ -21,6 +22,8 @@ export default class JobList extends React.Component {
             id: props.match.params.id,
             name: props.match.params.name,
             items: [],
+            frames: [],
+            videoDuration : 0,
             videoWidth: videoWidth,
             videoHeight: videoHeight,
             deleteBtnEnable: false,
@@ -32,7 +35,14 @@ export default class JobList extends React.Component {
     }
 
     componentDidMount() {
-        VideoActions.list(this.state.cid);
+        VideoActions.list(this.state.id);
+        VideoActions.sourceFrameList(this.state.id);
+
+        let Media = this.refs.video;
+        Media.onloadedmetadata = () =>{
+            var time = parseInt(Media.duration);
+            this.setState({videoDuration:time});
+        }
     }
 
     componentWillUnmount() {
@@ -43,6 +53,10 @@ export default class JobList extends React.Component {
         if (type === 'list') {
             console.log('items', data);
             this.setState({items: data.list, deleteBtnEnable: false, total: data.total});
+        }
+        if (type === 'sourceFrameList') {
+            console.log('sourceFrameList', data);
+            this.setState({frames: data.list, deleteBtnEnable: false, total: data.total});
         }
         if (type === 'delete') {
             VideoActions.list(this.state.cid);
@@ -138,7 +152,7 @@ export default class JobList extends React.Component {
         }
     };
 
-    onProgress=(time)=>{
+    onProgress = (time) => {
         // 视频条转滚动态条
         let Media = this.refs.video;
         Media.currentTime = time;
@@ -175,7 +189,7 @@ export default class JobList extends React.Component {
                 </div>
                 <Content className="overflow">
                     <Layout className="list-content">
-                        <Row >
+                        <Row>
                             <Col span={12}>
                                 <Card style={{width: this.state.videoWidth, height: this.state.videoHeight}}>
                                     <video id="video" ref="video" className="video-js vjs-default-skin vjs-fluid"
@@ -201,8 +215,8 @@ export default class JobList extends React.Component {
                                 </Card>
                             </Col>
                         </Row>
-                        <Card >
-                            <Progress onProgress={this.onProgress} />
+                        <Card>
+                            <Progress duration={this.state.videoDuration} frames={this.state.frames} onProgress={this.onProgress}/>
                         </Card>
 
                     </Layout>
@@ -213,7 +227,7 @@ export default class JobList extends React.Component {
                             <Button type="danger" disabled={!this.state.deleteBtnEnable} onClick={this.deleteClick}
                                     style={{marginLeft: 16}}>删除视频</Button>
                         </Header>
-                        <Content >
+                        <Content>
                             <Table
                                 className="bg-white"
                                 rowKey="_id"
@@ -234,7 +248,7 @@ export default class JobList extends React.Component {
                                 visible={this.state.visible}
                                 footer={null}
                             >
-                                <Row >
+                                <Row>
                                     <Col offset={2} span={4} className="title">描述</Col>
                                     <Col offset={2} span={13}>
                                         <Input
@@ -247,7 +261,7 @@ export default class JobList extends React.Component {
                                     </Col>
                                 </Row>
                                 <Row><Col span={24}>&nbsp;</Col></Row>
-                                <Row >
+                                <Row>
                                     <Col offset={2} span={4} className="title">上传人像</Col>
                                     <Col offset={2} span={13}>
                                         <Upload

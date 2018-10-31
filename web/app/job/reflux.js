@@ -5,12 +5,33 @@ import propx from '../http/proxy';
 const VideoActions = Reflux.createActions([
         'list',
         'add',
-        'delete'
+        'delete',
+        'sourceFrameList'
     ]
 );
 
 const VideoStore = Reflux.createStore({
     listenables: [VideoActions],
+
+    onSourceFrameList:function(videoid){
+        let self = this;
+        let url = Config.server + "/face/api/video/source/frame/" + videoid;
+
+        let param = {};
+
+        propx.get(url, param, (code, data) => {
+            let total = 0;
+            // 没有数据
+            if (data.statusCode === 404) {
+                self.items = [];
+            }
+            else {
+                self.items = data.data;
+            }
+
+            self.trigger('sourceFrameList', {total: self.items.length, list: self.items, param: param});
+        });
+    },
 
     //获取列表
     onList: function () {
