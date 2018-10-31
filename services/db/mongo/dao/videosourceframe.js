@@ -41,10 +41,10 @@ module.exports = class Logic {
         });
     }
 
-    list(vid){
+    list(videoid){
         return new Promise((resolve, reject) => {
             let doc = getMongoPool().VideoSourceFrame;
-            doc.find({"vid":vid},{time:1}).sort({time:1}).exec(function (err, Item) {
+            doc.find({"videoid":videoid},{time:1}).sort({time:1}).exec(function (err, Item) {
                 if (err) {
                     reject(err);
                 } else {
