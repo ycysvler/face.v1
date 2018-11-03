@@ -5,7 +5,7 @@ import NotFound from '../notfound';
 import './main.less';
 import FaceList from '../face/list';
 import VideoList from '../video/list';
-import JobList from '../job/list';
+import JobIndex from '../job/index';
 import FaceGroupList from '../facegroup/list';
 const SubMenu = Menu.SubMenu;
 const MenuItemGroup = Menu.ItemGroup;
@@ -51,7 +51,7 @@ export default class CentrePlatform extends React.Component {
                             <Route path="/main/facegroup" component={FaceGroupList}/>
                             <Route path="/main/video" component={VideoList}/>
                             <Route path="/main/face/:id" component={FaceList}/>
-                            <Route path="/main/job/:id/:name" component={JobList}/>
+                            <Route path="/main/job/:id/:name" component={JobIndex}/>
                             <Route component={NotFound}/>
                         </Switch>
                     </Router>
