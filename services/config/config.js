@@ -9,7 +9,7 @@ module.exports = {
     // 10.211.55.7
     // 192.168.1.105
     mongodb: {
-        uri: 'mongodb://10.211.55.7/',
+        uri: 'mongodb://192.168.1.105/',
         options: {
             server: {socketOptions: {keepAlive: 1}},
             replset: {socketOptions: {keepAlive: 1}}
