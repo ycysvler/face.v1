@@ -6,16 +6,17 @@ const VideoActions = Reflux.createActions([
         'list',
         'add',
         'delete',
-        'sourceFrameList'
+        'sourceFrameList',
+        'sourceFrameInfo'
     ]
 );
 
 const VideoStore = Reflux.createStore({
     listenables: [VideoActions],
 
-    onSourceFrameList:function(videoid){
+    onSourceFrameList:function(videoId){
         let self = this;
-        let url = Config.server + "/face/api/video/source/frame/" + videoid;
+        let url = Config.server + "/face/api/video/source/frame/" + videoId;
 
         let param = {};
 
@@ -30,6 +31,18 @@ const VideoStore = Reflux.createStore({
             }
 
             self.trigger('sourceFrameList', {total: self.items.length, list: self.items, param: param});
+        });
+    },
+
+    onSourceFrameInfo:function(frameId){
+        let self = this;
+        let url = Config.server + "/face/api/video/source/frame/info/" + frameId;
+
+        let param = {};
+
+        propx.get(url, param, (code, data) => {
+            // 没有数据
+            self.trigger('sourceFrameInfo', {data: data.data, param: param});
         });
     },
 

@@ -45,7 +45,7 @@ export default class progress extends React.Component {
     onProgress=(frames)=>{
       console.log('frames', frames);
       // 调用父窗体改滚动条
-      this.state.onProgress(frames.time);
+      this.state.onProgress(frames);
     };
 
     render() {
