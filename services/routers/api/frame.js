@@ -47,11 +47,19 @@ module.exports = function (router) {
                 ctx.body =  {code: 404, data: item};
             }
             else{
-                item.source = 'data:image/png;base64,' + item.source.toString('base64');
-                for(let f of item.faces){
+                let data = {};
+                data.source = item.source;
+                data._id = item._id;
+                data.frameno = item.frameno;
+                data.time = item.time;
+                data.videoid = item.videoid;
+                data.faces = item.faces;
+
+                data.source = 'data:image/png;base64,' + data.source.toString('base64');
+                for(let f of data.faces){
                     f.source = 'data:image/png;base64,' + f.source.toString('base64');
                 }
-                ctx.body =  {code: 200, data: item};
+                ctx.body =  {code: 200, data: data};
             }
         }
 

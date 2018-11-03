@@ -22,6 +22,20 @@ module.exports = function (router) {
         let items = await videoLogic.list();
         ctx.body = {code: 200, data: items};
     });
+    // 获取视频列表
+    router.get('/video/:id', async (ctx) => {
+        let ok = tools.required(ctx, ['id']);
+        if(ok){
+            let id = ctx.params.id;
+        }
+        let item = await videoLogic.single(id);
+        if(item){
+            ctx.body = {code: 200, data: item};
+        }else{
+            ctx.body =  {code: 404, data: item};
+        }
+
+    });
     // 上传视频
     router.post('/video', async (ctx) => {
         let ok = tools.required(ctx, ["group", "fps",  "desc"]);

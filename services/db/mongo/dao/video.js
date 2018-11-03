@@ -39,6 +39,19 @@ module.exports = class Logic {
         });
     }
 
+    single(id){
+        return new Promise((resolve, reject) => {
+            let doc = getMongoPool().Video;
+            doc.findOne({"_id":mongoose.Types.ObjectId(id)}).exec(function (err, Item) {
+                if (err) {
+                    reject(err);
+                } else {
+                    resolve(Item);
+                }
+            });
+        });
+    }
+
     removeByIds(ids) {
         return new Promise((resolve, reject) => {
             let doc = getMongoPool().Video;
