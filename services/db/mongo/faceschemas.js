@@ -57,7 +57,7 @@ module.exports = class Schemas {
 
         // 查询任务
         this.jobSchema = new mongoose.Schema({
-            vid: {type: String, index: true},                               // 视频ID
+            videoid: {type: String, index: true},                           // 视频ID
             name: {type: String},                                           // 视频名称
             desc: String,                                                   // 描述信息
             updatetime: {type: Date, index: true}                           // 更新时间
@@ -66,7 +66,7 @@ module.exports = class Schemas {
 
         // 关键帧
         this.videoKeyFrameSchema = new mongoose.Schema({
-            jid: {type: String, index: true},                               // JobID
+            jobid: {type: String, index: true},                             // JobID
             frameno: {type: Number},                                        // 帧号
             time: {type: Number},                                           // 这一帧所在的时间：秒
             res : Array                                                     // [trackid,source,cid 人物图像ID]

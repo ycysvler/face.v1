@@ -10,7 +10,7 @@ module.exports = class Logic {
     create(data) {
         return new Promise(async(resolve, reject) => {
             try {
-                let Doc = getMongoPool().VideoKeyFrame;
+                let Doc = getMongoPool().Job;
                 let item = new Doc(data);
                 item.updatetime = new moment();
                 item.save(async(err, item) => {
@@ -26,10 +26,10 @@ module.exports = class Logic {
         });
     }
 
-    list(jobid){
+    list(videoid){
         return new Promise((resolve, reject) => {
-            let doc = getMongoPool().VideoKeyFrame;
-            doc.find({"jobid":jobid}).sort({time:1}).exec(function (err, Item) {
+            let doc = getMongoPool().Job;
+            doc.find({"videoid":videoid}).sort({time:1}).exec(function (err, Item) {
                 if (err) {
                     reject(err);
                 } else {
@@ -41,8 +41,8 @@ module.exports = class Logic {
 
     removeByIds(ids) {
         return new Promise((resolve, reject) => {
-            let doc = getMongoPool().VideoKeyFrame;
-            doc.deleteMany({id: {$in: ids}}, function (err, Item) {
+            let doc = getMongoPool().Job;
+            doc.deleteMany({videoid: {$in: ids}}, function (err, Item) {
                 if (err) {
                     reject(err);
                 } else {

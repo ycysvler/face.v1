@@ -7,13 +7,8 @@ const path = require('path');
 const moment = require('moment');
 
 const tools = require('../../utils/tools');
-const uploadFile = require('../../utils/upload');
 const VideoLogic = require('../../db/mongo/dao/video');
-const VideoKeyFrameLogic = require('../../db/mongo/dao/videokeyframe');
 const VideoSourceFrameLogic = require('../../db/mongo/dao/videosourceframe');
-
-const videoLogic = new VideoLogic();
-const videoKeyFrameLogic = new VideoKeyFrameLogic();
 const videoSourceFrameLogic = new VideoSourceFrameLogic();
 
 module.exports = function (router) {
@@ -26,16 +21,7 @@ module.exports = function (router) {
             ctx.body = {code: 200, data: items};
         }
     });
-    // 获取关键帧列表
-    router.get('/video/key/frame/:videoid', async (ctx) => {
-        let ok = tools.required(ctx, ['videoid']);
-        console.log(ctx.params.name);
-        if (ok) {
-            let videoid = ctx.params.videoid;
-            let items = await videoKeyFrameLogic.list(videoid);
-            ctx.body = {code: 200, data: items};
-        }
-    });
+
     // 获取原始帧数据
     router.get('/video/source/frame/info/:id', async(ctx)=>{
         let ok = tools.required(ctx, ['id']);
@@ -64,7 +50,6 @@ module.exports = function (router) {
         }
 
     });
-
     // 【废弃】获取原始帧大图数据
     router.get('/video/source/frame/image/:id', async (ctx) => {
         let ok = tools.required(ctx, ['id']);
