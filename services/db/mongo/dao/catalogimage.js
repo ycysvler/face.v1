@@ -1,4 +1,5 @@
 const moment = require('moment');
+const mongoose = require('mongoose');
 const getMongoPool = require('../pool.js');
 
 module.exports = class CatalogImageLogic {
@@ -26,10 +27,10 @@ module.exports = class CatalogImageLogic {
         });
     }
 
-    single(name){
+    single(id){
         return new Promise((resolve, reject) => {
             let doc = getMongoPool().CatalogImage;
-            doc.findOne({"name":name}).exec(function (err, Item) {
+            doc.findOne({"_id":mongoose.Types.ObjectId(id)}).exec(function (err, Item) {
                 if (err) {
                     reject(err);
                 } else {

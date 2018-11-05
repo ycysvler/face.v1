@@ -48,12 +48,11 @@ module.exports = function (router) {
         }
     });
     // 获取图片内容
-    router.get('/catalog/source/:name', async (ctx) => {
-        let ok = tools.required(ctx, ['name']);
-        console.log(ctx.params.name);
+    router.get('/catalog/source/:id', async (ctx) => {
+        let ok = tools.required(ctx, ['id']);
         if (ok) {
-            let name = ctx.params.name;
-            let item = await catalogImageLogic.single(name);
+            let id = ctx.params.id;
+            let item = await catalogImageLogic.single(id);
             ctx.body = item.source;
         }
     });

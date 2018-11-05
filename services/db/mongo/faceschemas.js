@@ -69,7 +69,7 @@ module.exports = class Schemas {
             jobid: {type: String, index: true},                             // JobID
             frameno: {type: Number},                                        // 帧号
             time: {type: Number},                                           // 这一帧所在的时间：秒
-            res : Array                                                     // [trackid,source,cid 人物图像ID]
+            res : Array                                                     // [sourceframeid, trackid, cid 人物图像ID]
         });
         this.VideoKeyFrame = conn.model('VideoKeyFrame', this.videoKeyFrameSchema);
     }

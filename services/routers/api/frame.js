@@ -22,6 +22,24 @@ module.exports = function (router) {
         }
     });
 
+    router.get('/video/source/face/:id/:trackid', async (ctx) => {
+        let ok = tools.required(ctx, ['id','trackid']);
+        if (ok) {
+            let id = ctx.params.id;
+            let trackid = ctx.params.trackid;
+
+            let item = await videoSourceFrameLogic.single(id);
+
+            let data = null;
+
+            for(let face of item.faces){
+                if(face.trackid === trackid)
+                    data = 'data:image/png;base64,' + face.source.toString('base64');
+            }
+            ctx.body = data;
+        }
+    });
+
     // 获取原始帧数据
     router.get('/video/source/frame/info/:id', async(ctx)=>{
         let ok = tools.required(ctx, ['id']);
