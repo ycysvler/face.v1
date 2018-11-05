@@ -54,11 +54,11 @@ export default class FaceList extends React.Component {
         {
             title: '人像',
             dataIndex: 'name',
-            render: (value) => {
+            render: (value, item) => {
                 return <Popover
-                    content={<img style={{height:160}} src={Config.server + "/face/api/catalog/source/" + value}></img>}
+                    content={<img style={{height:160}} src={Config.server + "/face/api/catalog/source/" + item._id}></img>}
                 >
-                    <img style={{height:32}} src={Config.server + "/face/api/catalog/source/" + value}></img>
+                    <img style={{height:32}} src={Config.server + "/face/api/catalog/source/" + item._id}></img>
                 </Popover>
             },
         },

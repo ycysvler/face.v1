@@ -7,12 +7,53 @@ const VideoActions = Reflux.createActions([
         'add',
         'delete',
         'sourceFrameList',
-        'sourceFrameInfo'
+        'sourceFrameInfo',
+        'sourceKeyList',
+        'jobList'
     ]
 );
 
 const VideoStore = Reflux.createStore({
     listenables: [VideoActions],
+    onJobList:function(videoId){
+        let self = this;
+        let url = Config.server + "/face/api/job/" + videoId;
+
+        let param = {};
+
+        propx.get(url, param, (code, data) => {
+            let total = 0;
+            // 没有数据
+            if (data.statusCode === 404) {
+                self.items = [];
+            }
+            else {
+                self.items = data.data;
+            }
+
+            self.trigger('jobList', {total: self.items.length, list: self.items, param: param});
+        });
+    },
+
+    onSourceKeyList:function(jobId){
+        let self = this;
+        let url = Config.server + "/face/api/job/key/frame/" + jobId;
+
+        let param = {jobId};
+
+        propx.get(url, param, (code, data) => {
+            let total = 0;
+            // 没有数据
+            if (data.statusCode === 404) {
+                self.items = [];
+            }
+            else {
+                self.items = data.data;
+            }
+
+            self.trigger('sourceKeyList', {total: self.items.length, list: self.items, param: param});
+        });
+    },
 
     onSourceFrameList:function(videoId){
         let self = this;

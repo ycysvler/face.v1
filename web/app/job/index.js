@@ -178,7 +178,7 @@ export default class JobIndex extends React.Component {
                         </Content>
                         <Sider width="400" className="progress-sider" >
                             <Card>
-                                <JobList></JobList>
+                                <JobList videoid={this.state.id}></JobList>
                             </Card>
                         </Sider>
                     </Layout>
