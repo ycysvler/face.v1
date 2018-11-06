@@ -28,7 +28,6 @@ module.exports = class Logic {
     }
 
     single(id){
-        console.log('id', id);
         return new Promise((resolve, reject) => {
             let doc = getMongoPool().VideoSourceFrame;
             doc.findOne({"_id":mongoose.Types.ObjectId(id)}).exec(function (err, Item) {

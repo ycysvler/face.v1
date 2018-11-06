@@ -22,24 +22,6 @@ module.exports = function (router) {
         }
     });
 
-    router.get('/video/source/face/:id/:trackid', async (ctx) => {
-        let ok = tools.required(ctx, ['id','trackid']);
-        if (ok) {
-            let id = ctx.params.id;
-            let trackid = ctx.params.trackid;
-
-            let item = await videoSourceFrameLogic.single(id);
-
-            let data = null;
-
-            for(let face of item.faces){
-                if(face.trackid === trackid)
-                    data = 'data:image/png;base64,' + face.source.toString('base64');
-            }
-            ctx.body = data;
-        }
-    });
-
     // 获取原始帧数据
     router.get('/video/source/frame/info/:id', async(ctx)=>{
         let ok = tools.required(ctx, ['id']);
@@ -66,36 +48,27 @@ module.exports = function (router) {
                 ctx.body =  {code: 200, data: data};
             }
         }
+    });
 
-    });
-    // 【废弃】获取原始帧大图数据
-    router.get('/video/source/frame/image/:id', async (ctx) => {
-        let ok = tools.required(ctx, ['id']);
-        console.log('ctx.params.id', ctx.params.id);
+    router.get('/video/source/face/:id/:trackid', async (ctx) => {
+        let ok = tools.required(ctx, ['id','trackid']);
         if (ok) {
             let id = ctx.params.id;
+            let trackid = ctx.params.trackid;
+
             let item = await videoSourceFrameLogic.single(id);
-            ctx.body =  item.source;
+
+            let buffer = null;
+
+            for(let f of item.faces){
+                if(f.trackid === trackid)
+                    // 这里这个buffer老蛋疼了
+                    // 因为schema声明了外面source的类型，所以source实际类型是buffer
+                    // 但是这个face是Binary类型，要取一下buffer才跟source是一个东西
+                    buffer = f.source.buffer;
+            }
+            ctx.body = buffer;
         }
     });
-    // 【废弃】获取原始帧大图Base64
-    router.get('/video/source/frame/base64/:id', async (ctx) => {
-        let ok = tools.required(ctx, ['id']);
-        console.log('ctx.params.id', ctx.params.id);
-        if (ok) {
-            let id = ctx.params.id;
-            let item = await videoSourceFrameLogic.single(id);
-            ctx.body =  'data:image/png;base64,' + item.source.toString('base64');
-        }
-    });
-    // 【废弃】获取关键帧图像数据
-    router.get('/video/key/frame/image/:id', async (ctx) => {
-        let ok = tools.required(ctx, ['id']);
-        console.log('ctx.params.id', ctx.params.id);
-        if (ok) {
-            let id = ctx.params.id;
-            let item = await videoKeyFrameLogic.single(id);
-            ctx.body = item.source;
-        }
-    });
+
 };
