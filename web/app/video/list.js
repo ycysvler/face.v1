@@ -34,12 +34,6 @@ export default class FaceList extends React.Component {
         }
     };
 
-    handleClick = (e) => {
-        this.setState({
-            current: e.key,
-        });
-    };
-
     deleteClick = () => {
         console.log('selectedRowKeys', this.state.selectedRowKeys);
         VideoActions.delete(this.state.selectedRowKeys);
@@ -53,15 +47,23 @@ export default class FaceList extends React.Component {
 
         },
         {
-            title: '名称',
-            dataIndex: 'name',
-            render: (text, info) => {return <Link to={"/main/job/" + info._id + "/" + info.name} >{info.name}</Link>},
+            title: '分组',
+            dataIndex: 'group',
         },
-
         {
             title: '描述',
             dataIndex: 'desc',
         },
+        {
+            title: '名称',
+            dataIndex: 'name',
+            render: (text, info) => {return <Link to={"/main/job/" + info._id + "/" + info.name} >{info.name}</Link>},
+        },
+        {
+            title: '帧率',
+            dataIndex: 'fps',
+        },
+
         {
             title: '更新时间',
             dataIndex: 'updatetime',
@@ -121,7 +123,7 @@ export default class FaceList extends React.Component {
             this.state.visible = false;
             this.state.fileList = [];
             this.state.newItem = {};
-            FaceActions.list(this.state.cid);
+            VideoActions.list(this.state.cid);
         }
     };
 
@@ -179,10 +181,36 @@ export default class FaceList extends React.Component {
                             onOk={this.handleOk}
                             onCancel={this.handleCancel}
                             className="modify"
-                            title="添加人像"
+                            title="上传视频"
                             visible={this.state.visible}
                             footer={null}
                         >
+                            <Row >
+                                <Col offset={2} span={4} className="title">分组</Col>
+                                <Col offset={2} span={13}>
+                                    <Input
+                                        value={this.state.newItem.group}
+                                        onChange={(e) => {
+                                            let item = this.state.newItem;
+                                            item.group = e.target.value;
+                                            this.setState({newItem: item});
+                                        }}/>
+                                </Col>
+                            </Row>
+                            <Row><Col span={24}>&nbsp;</Col></Row>
+                            <Row >
+                                <Col offset={2} span={4} className="title">帧率</Col>
+                                <Col offset={2} span={13}>
+                                    <Input
+                                        value={this.state.newItem.fps}
+                                        onChange={(e) => {
+                                            let item = this.state.newItem;
+                                            item.fps = e.target.value;
+                                            this.setState({newItem: item});
+                                        }}/>
+                                </Col>
+                            </Row>
+                            <Row><Col span={24}>&nbsp;</Col></Row>
                             <Row >
                                 <Col offset={2} span={4} className="title">描述</Col>
                                 <Col offset={2} span={13}>
@@ -197,10 +225,10 @@ export default class FaceList extends React.Component {
                             </Row>
                             <Row><Col span={24}>&nbsp;</Col></Row>
                             <Row >
-                                <Col offset={2} span={4} className="title">上传人像</Col>
+                                <Col offset={2} span={4} className="title">上传视频</Col>
                                 <Col offset={2} span={13}>
                                     <Upload
-                                        action={Config.server + `/face/api/catalog/source?cid=${this.state.cid}&desc=${this.state.newItem.desc}`}
+                                        action={Config.server + `/face/api/video?fps=${this.state.newItem.fps}&group=${this.state.newItem.group}&desc=${this.state.newItem.desc}`}
                                         listType="picture-card"
                                         fileList={this.state.fileList}
                                         onChange={this.handleChange}
