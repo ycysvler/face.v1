@@ -61,15 +61,15 @@ function uploadFile(ctx, options) {
 
             // 文件保存到制定路径
             file.pipe(fs.createWriteStream(saveTo));
-
             // 文件写入事件结束
             file.on('end', function () {
                 result.success = true;
                 result.message = '文件上传成功';
                 result.path = _uploadFilePath;
-
+                console.log('_uploadFilePath',_uploadFilePath);
                 console.log('文件上传成功！');
-                resolve(result);
+
+                //resolve(result);
             })
         })
 

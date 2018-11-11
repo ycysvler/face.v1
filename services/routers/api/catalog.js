@@ -65,11 +65,14 @@ module.exports = function (router) {
 
             let serverFilePath = path.join(__dirname, '../../public');
 
+            console.log('001');
+
             // 上传文件事件
             let f = await uploadFile(ctx, {
                 fileType: 'images',          // 上传之后的目录
                 path: serverFilePath
             });
+
             // 文件名
             let filename = path.basename(f.path);
             // 文件内容
