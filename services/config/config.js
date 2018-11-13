@@ -34,9 +34,7 @@ module.exports = {
 
     // server 相关配置
     server: {
-        web:{
-            port: 4000                          // 服务启动端口号
-        },
+
         face: {
             port: 4001                          // 服务启动端口号
         }
