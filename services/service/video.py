@@ -47,6 +47,9 @@ def imageService():
     classifier = IFaceRecognize(modeldir,0)
     while True:
     	params = pip.recv()
+        # save file
+        item = mongodb.db('').catalogimages.find_one({'_id': params["id"]})
+        print item
         im_1 = r"/home/zzy/pic/facepicture/12_1_187-178-261-252_5476.jpg"
         im_2 = r"/home/zzy/pic/facepicture/24_0_616-137-681-202_4225.jpg"
         im_1 = cv2.imread(im_1)
@@ -57,6 +60,7 @@ def imageService():
         result = classifier.recognize(feature_1,feature_2)
         print 'imageService feature_2 ' , feature_2 
     	print 'imageService params ' , result 
+        # delete file
     	pip.send({"code":200, "cotent": str(result)})
 
 # 下面是Http处理部分
