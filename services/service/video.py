@@ -6,10 +6,12 @@ import bson.binary
 import config
 import time
 import os 
+import cv2
 import datetime 
 import argparse 
 import json 
 import urllib
+from IFaceRecognize import IFaceRecognize
 from multiprocessing import Process, Pipe
 sys.path.append("./dll")
 
@@ -41,10 +43,21 @@ def jobService():
 
 def imageService():
     pip = pip_image_service
+    modeldir = r'/home/zzy/models'
+    classifier = IFaceRecognize(modeldir,0)
     while True:
     	params = pip.recv()
-    	print 'imageService params ' , params 
-    	pip.send({"code":200, "cotent":"image " + params["id"]})
+        im_1 = r"/home/zzy/pic/facepicture/12_1_187-178-261-252_5476.jpg"
+        im_2 = r"/home/zzy/pic/facepicture/24_0_616-137-681-202_4225.jpg"
+        im_1 = cv2.imread(im_1)
+        im_2 = cv2.imread(im_2)
+
+        feature_1 = classifier.extractFeature(im_1)
+        feature_2 = classifier.extractFeature(im_2)
+        result = classifier.recognize(feature_1,feature_2)
+        print 'imageService feature_2 ' , feature_2 
+    	print 'imageService params ' , result 
+    	pip.send({"code":200, "cotent": str(result)})
 
 # 下面是Http处理部分
 app = Flask(__name__)
@@ -86,8 +99,22 @@ def newJob():
 def webService():
     app.run(debug=False, host='0.0.0.0', port=4003)
 
+def run(): 
+    im_1 = r"/home/zzy/pic/facepicture/12_1_187-178-261-252_5476.jpg"
+    im_2 = r"/home/zzy/pic/facepicture/24_0_616-137-681-202_4225.jpg"
+    im_1 = cv2.imread(im_1)
+    im_2 = cv2.imread(im_2)
+
+    feature_1 = classifier.extractFeature(im_1)
+    feature_2 = classifier.extractFeature(im_2)
+    result = classifier.recognize(feature_1,feature_2)
+    print(result)
+
+
+
 if __name__ == '__main__':
 # 启动计算集成等待努力工作
+    #run()
     webProcess = Process(target=webService) 
     webProcess.start()
 
