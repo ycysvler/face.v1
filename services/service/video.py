@@ -11,6 +11,7 @@ import datetime
 import argparse 
 import json 
 import urllib
+from bson.objectid import ObjectId
 from IFaceRecognize import IFaceRecognize
 from multiprocessing import Process, Pipe
 sys.path.append("./dll")
@@ -48,20 +49,20 @@ def imageService():
     while True:
     	params = pip.recv()
         # save file
-        item = mongodb.db('').catalogimages.find_one({'_id': params["id"]})
-        print item
-        im_1 = r"/home/zzy/pic/facepicture/12_1_187-178-261-252_5476.jpg"
-        im_2 = r"/home/zzy/pic/facepicture/24_0_616-137-681-202_4225.jpg"
-        im_1 = cv2.imread(im_1)
-        im_2 = cv2.imread(im_2)
-
-        feature_1 = classifier.extractFeature(im_1)
-        feature_2 = classifier.extractFeature(im_2)
-        result = classifier.recognize(feature_1,feature_2)
-        print 'imageService feature_2 ' , feature_2 
-    	print 'imageService params ' , result 
+        item = mongodb.db('').catalogimages.find_one({'_id': ObjectId(params["id"])})
+        
+        imagepath = 'temp/' + item['name']
+        print imagepath
+        file = open(imagepath, 'wb')
+        file.write(item['source'])
+        file.close()
+        feature = cv2.imread(imagepath)
+        print feature
         # delete file
-    	pip.send({"code":200, "cotent": str(result)})
+        # os.remove(imagepath)
+        mongodb.db('').catalogimages.update({'_id':ObjectId(params["id"])},{'$set':{'status':2}})
+        print 'why' 
+    	pip.send({"code":200, "cotent":"ok"})
 
 # 下面是Http处理部分
 app = Flask(__name__)
@@ -120,15 +121,17 @@ if __name__ == '__main__':
 # 启动计算集成等待努力工作
     #run()
     webProcess = Process(target=webService) 
-    webProcess.start()
+    #webProcess.start()
 
     videoProcess = Process(target=videoService) 
-    videoProcess.start()
+    #videoProcess.start()
 
     jobProcess = Process(target=jobService) 
-    jobProcess.start()
+    #jobProcess.start()
  
     imageProcess = Process(target=imageService) 
-    imageProcess.start()
-     
+    #imageProcess.start()
+ 
+    list1 = [1,2,3,4]
+    print list1     
  
