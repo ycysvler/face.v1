@@ -59,6 +59,8 @@ module.exports = class Schemas {
         this.jobSchema = new mongoose.Schema({
             videoid: {type: String, index: true},                           // 视频ID
             name: {type: String},                                           // 视频名称
+            status:{type:Number},                                           // 查询任务状态 0：新任务，1：计算中 2：完成 -1：失败
+            cids:Array,                                                     // 犯罪分子头像ID
             desc: String,                                                   // 描述信息
             updatetime: {type: Date, index: true}                           // 更新时间
         });

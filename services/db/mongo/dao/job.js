@@ -13,6 +13,7 @@ module.exports = class Logic {
                 let Doc = getMongoPool().Job;
                 let item = new Doc(data);
                 item.updatetime = new moment();
+                item.status = 0;
                 item.save(async(err, item) => {
                     if (!err) {
                         resolve(item);
