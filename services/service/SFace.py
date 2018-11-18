@@ -36,7 +36,7 @@ class FaceService:
             # save file
             item = mongodb.db('').catalogimages.find_one({'_id': ObjectId(params["id"])}) 
             if item == None:
-                print 'face service > work >', '\033[1;31m id ['+ str(params["id"]) +'] is miss !\033[0m' 
+                print 'face service > work >', '\033[1;31m id ['+ str(params["id"]) +'] is missing !\033[0m' 
                 self.pip_service.send({"code":404})
                 continue
 

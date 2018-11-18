@@ -14,6 +14,7 @@ import urllib
 from bson.objectid import ObjectId
 from IFaceRecognize import IFaceRecognize
 from IFaceAnalyze import IFaceAnalyze
+from SFace import FaceService
 from multiprocessing import Process, Pipe
 sys.path.append("./dll")
 
@@ -27,6 +28,11 @@ from flask import Flask,request ,Response
 pip_video_web, pip_video_service = Pipe()
 pip_job_web, pip_job_service = Pipe()
 pip_image_web, pip_image_service = Pipe()
+
+model_dir = "/home/zzy/models"
+
+faceService = FaceService(model_dir,int(0),int(10),int(10))
+faceService.start()
 
 # 处理一个视频目录的图片
 def work(path, video, filename, classifier): 
@@ -160,7 +166,10 @@ def jobService():
     pip = pip_job_service
     while True:
     	params = pip.recv()
-    	print 'jobService params ' , params 
+    	#print 'jobService params ' , params 
+        print 'job > id     >', '\033[1;32m '+ params["id"] +' \033[0m'
+        item = mongodb.db('').jobs.find_one({'_id':ObjectId(params['id'])})
+        print 'job > info   >', '\033[1;32m '+ str(item) +' \033[0m'
     	pip.send({"code":200, "cotent":"job " + params["id"]})
 
 def imageService():
@@ -200,13 +209,17 @@ def videoFrame():
 # new catalog image
 @app.route('/catalog/image')
 def catalogImage():
+    id = request.args.get("id")
+    result = faceService.call(id)
+    return Response(json.dumps(result),mimetype='application/json')  
+'''
     pip = pip_image_web;
     id = request.args.get("id")
     print "/catalog/image", id
     pip.send({"id":id})
     result = pip.recv()
     return Response(json.dumps(result),mimetype='application/json')  
-
+'''
 # new query job
 @app.route('/job')
 def newJob():
@@ -245,9 +258,9 @@ if __name__ == '__main__':
     videoProcess.start()
 
     jobProcess = Process(target=jobService) 
-    #jobProcess.start()
+    jobProcess.start()
  
-    imageProcess = Process(target=imageService) 
+    #imageProcess = Process(target=imageService) 
     #imageProcess.start()
     
  

@@ -15,6 +15,7 @@ from bson.objectid import ObjectId
 from IFaceRecognize import IFaceRecognize
 from IFaceAnalyze import IFaceAnalyze
 from SFace import FaceService
+from SVideo import VideoService
 from multiprocessing import Process, Pipe
 sys.path.append("./dll")
 
@@ -34,134 +35,10 @@ model_dir = "/home/zzy/models"
 faceService = FaceService(model_dir,int(0),int(10),int(10))
 faceService.start()
 
-# 处理一个视频目录的图片
-def work(path, video, filename, classifier): 
-    videos = mongodb.db('').videos 
-    print 'video > name >', '\033[1;32m '+ filename +' \033[0m'
-    if video == None:
-        print 'video > name >', '\033[1;31m '+ filename +' \033[0m' , 'is 404 !' 
-        return
-
-    videoid = str(video['_id'])
-
-    print 'video > id   >', '\033[1;32m '+ videoid +' \033[0m'
-   
-    bigpath = os.path.join(path, 'bigpicture')
-    facepath = os.path.join(path, 'facepicture')
-    # adapter group
-    faceDict = groupFacePicture(facepath)
-  
-    bigimages = os.listdir(bigpath) 
-
-    for filename in bigimages:
-        bigimage = os.path.join(bigpath, filename)
-        print 'big image >', '\033[1;32m'+ filename +' --------------------------------------------------------------- \033[0m'
-        (shotname,extension) = os.path.splitext(filename)
-        frameno = int(shotname)
-          
-        videosourceframes = mongodb.db('').videosourceframes
-  
-        item = {}
-        item['videoid'] = videoid
-        item['time'] = frameno / 24
-        item['frameno'] = frameno
-         
-        print 'big image > video info >', item
-        
-        item['faces'] = []
-
-        with open(bigimage, 'rb') as image:
-            item['source'] = bson.binary.Binary(image.read()) 
-
-        if faceDict.has_key(shotname):
-            for facename in faceDict.get(shotname):
-                # 从图像名中整理图像数据
-                faceItem = faceItemBuilder(facepath, facename, classifier)
-                
-                item['faces'].append(faceItem) 
-               
-        else:
-            print 'big image > face  info >', '\033[1;31mframe '+ filename +' \033[0m' , '\033[1;31mface images is 404 !\033[0m' 
-
-        videosourceframes.insert(item)
-
-# 从图像名中整理图像数据
-def faceItemBuilder(facepath, facename, classifier):
-    (shotname,extension) = os.path.splitext(facename)
-    
-    temp = shotname.split('_')
-
-    if len(temp) == 4:
-        frameno = temp[0]
-        trackid = temp[1]
-        location = {}
-        size = temp[3]
-
-        locations = temp[2].split('-')
-        if len(locations) == 4:
-            location['x1'] = int(locations[0])
-            location['y1'] = int(locations[1])
-            location['x2'] = int(locations[2])
-            location['y2'] = int(locations[3])
-        
-        item = {}
-        with open(os.path.join(facepath, facename)) as face:
-            item['trackid'] = trackid
-            item['size'] = int(size)
-            item['location'] = location
-
-            print 'big image > face  info >', item 
-
-            item['source'] = bson.binary.Binary(face.read()) 
-
-            im = cv2.imread(os.path.join(facepath, facename))
-            feature = classifier.extractFeature(im).tolist() 
-            item['feature'] = feature
-
-        return item
-    else:
-        return None
-
-# 将图片目录的文件名称按帧号分组
-def groupFacePicture(path):  
-    faceimages = os.listdir(path)
-
-    dict = {};
-    for filename in faceimages:
-        frame = filename.split("_")[0]
-        if dict.has_key(frame) == False:
-            dict[frame] = []
-        array = dict.get(frame)
-        array.append(filename)   
-    return dict;
-
+videoService = VideoService(model_dir,int(0),int(10),int(10))
+videoService.start()
 
 # service process
-def videoService():
-    pip = pip_video_service
-    modeldir = r'/home/zzy/models' 
-    face_analyzer = IFaceAnalyze(modeldir,int(0),int(10),int(10))
-    classifier = IFaceRecognize(modeldir,0)
-    while True:
-    	params = pip.recv()
-        print 'videoService params ' , params 
-        # save file
-        item = mongodb.db('').videos.find_one({'_id': ObjectId(params["id"])}) 
-        print item
-        videopath = str(config.videopath + "/" + item['name'])
-        pic_save_dir = str(os.path.dirname(os.path.realpath(__file__)) + "/video/" + str(item["_id"]) + "/")
-        
-        if not os.path.exists(pic_save_dir):
-            os.makedirs(pic_save_dir)
-          
-        #"/home/zzy/video/test.mp4"
-        face_analyzer.input(videopath,pic_save_dir,6)
-        face_analyzer.process()
- 
-        work(pic_save_dir, item, item['name'], classifier) 
-    	print 'videoService params ' , params 
-    	pip.send({"code":200, "cotent":"video " + params["id"]})
-
 def jobService():
     pip = pip_job_service
     while True:
@@ -179,15 +56,11 @@ app = Flask(__name__)
 
 # new video
 @app.route('/video/frame')
-def videoFrame():
-    pip = pip_video_web;
-    id = request.args.get("id");
-    print "/video/new", id
-    # web process call service process
-    pip.send({"id":id});
-    result = pip.recv()
+def videoFrame(): 
+    id = request.args.get("id")
+    result = videoService.call(id)
     return Response(json.dumps(result),mimetype='application/json')
-
+   
 # new catalog image
 @app.route('/catalog/image')
 def catalogImage():
@@ -224,14 +97,10 @@ def run():
 
 
 if __name__ == '__main__':
-# 启动计算集成等待努力工作
-    #run()
+# 启动计算集成等待努力工作 
     webProcess = Process(target=webService) 
     webProcess.start()
-
-    videoProcess = Process(target=videoService) 
-    videoProcess.start()
-
+  
     jobProcess = Process(target=jobService) 
     jobProcess.start()
  
