@@ -11,6 +11,7 @@ module.exports = {
     mongodb: {
         uri: 'mongodb://192.168.31.34/',
         options: {
+            useNewUrlParser:true,
             server: {socketOptions: {keepAlive: 1}},
             replset: {socketOptions: {keepAlive: 1}}
         }
