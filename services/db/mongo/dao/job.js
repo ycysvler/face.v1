@@ -43,6 +43,8 @@ module.exports = class Logic {
     removeByIds(ids) {
         return new Promise((resolve, reject) => {
             let doc = getMongoPool().Job;
+            getMongoPool().VideoKeyFrame.deleteMany({jobid: {$in: ids}},()=>{});
+
             doc.deleteMany({videoid: {$in: ids}}, function (err, Item) {
                 if (err) {
                     reject(err);
