@@ -13,8 +13,7 @@ module.exports = {
         options: {
             useNewUrlParser:true,
             auto_reconnect: true,
-            poolSize: 10,
-            useMongoClient: true
+            poolSize: 10
         }
     },
 
