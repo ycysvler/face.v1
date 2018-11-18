@@ -3,7 +3,7 @@
 from pymongo import MongoClient
 import config
 
-conn = MongoClient(config.mongodb['host'], config.mongodb['port'])
+conn = MongoClient(config.mongodb['host'], config.mongodb['port'], connect=False)
 def db(name):
     if(name == 'config'):
         return conn[name]
