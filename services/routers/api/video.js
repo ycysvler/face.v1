@@ -5,7 +5,8 @@ const fs = require('fs');
 const uuid = require('uuid');
 const path = require('path');
 const moment = require('moment');
-
+const request = require('request');
+const Config = require('../../config/config');
 const tools = require('../../utils/tools');
 const uploadFile = require('../../utils/upload');
 const VideoLogic = require('../../db/mongo/dao/video');
@@ -42,7 +43,8 @@ module.exports = function (router) {
         if (ok) {
             let desc = ctx.request.query['desc'];
             let group = ctx.request.query['group'];
-            let fps = ctx.request.query['fps'];
+
+            console.log(`path :\t\x1B[33m/video \t \x1B[0m \x1B[36m { group : ${group} , desc : ${desc} } \x1B[0m`);
 
             let serverFilePath = path.join(__dirname, '../../public');
 
@@ -54,9 +56,28 @@ module.exports = function (router) {
             // 文件名
             let filename = path.basename(f.path);
             // 消息体
-            let body = {"fps": fps, "group": group, "name": filename, "desc": desc};
+            let body = { "group": group, "name": filename, "desc": desc};
             // 添加数据
             let item = await videoLogic.create(body);
+
+            // 计算视频关键帧
+            let options = {
+                method: 'get',
+                url: `${Config.server.service.uri}/video?id=${item['_id']}`,
+                json: true,
+                headers: {
+                    "content-type": "application/json",
+                }
+            };
+
+            request(options, function (err, res, body) {
+                if (err) {
+                    console.log(err);
+                }else{
+                    console.log(`path :\t\x1B[33m${Config.server.service.uri}/video \t \x1B[0m \x1B[36m ${body} \x1B[0m`);
+
+                }
+            });
 
             ctx.body = {code: 200, data: item};
         }

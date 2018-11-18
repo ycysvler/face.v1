@@ -28,7 +28,7 @@ module.exports = function (router) {
             }
         }
     });
-    // 添加分组
+    // 创建查询任务
     router.post('/job', async(ctx) => {
         let ok = tools.required(ctx, ["videoid", "name", "desc"]);
         if (ok) {

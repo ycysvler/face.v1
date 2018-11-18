@@ -4,12 +4,12 @@
 const fs = require('fs');
 const path = require('path');
 const moment = require('moment');
-
+const request = require('request');
 const tools = require('../../utils/tools');
 const uploadFile = require('../../utils/upload');
 const CatalogLogic = require('../../db/mongo/dao/catalog');
 const CatalogImageLogic = require('../../db/mongo/dao/catalogimage');
-
+const Config = require('../../config/config');
 const catalogLogic = new CatalogLogic();
 const catalogImageLogic = new CatalogImageLogic();
 
@@ -40,7 +40,7 @@ module.exports = function (router) {
     // 获取分组下的图片列表
     router.get('/catalog/images/:cid', async (ctx) => {
         let ok = tools.required(ctx, ['cid']);
-        console.log(ctx.params.cid);
+        console.log(`path :\t\x1B[33m/catalog/images/:cid \t \x1B[0m \x1B[36m{ cid : ${ctx.params.cid} }\x1B[0m`);
         if (ok) {
             let cid = ctx.params.cid;
             let items = await catalogImageLogic.list(cid);
@@ -52,6 +52,8 @@ module.exports = function (router) {
         let ok = tools.required(ctx, ['id']);
         if (ok) {
             let id = ctx.params.id;
+            console.log(`path :\t\x1B[33m/catalog/source/:id \t \x1B[0m \x1B[36m { id : ${id} }\x1B[0m`);
+
             let item = await catalogImageLogic.single(id);
             ctx.body = item.source;
         }
@@ -63,9 +65,9 @@ module.exports = function (router) {
             let cid = ctx.request.query['cid'];
             let desc = ctx.request.query['desc'];
 
-            let serverFilePath = path.join(__dirname, '../../public');
+            console.log(`path :\t\x1B[33m/catalog/source \t \x1B[0m \x1B[36m { cid : ${cid} , desc : ${desc} \x1B[0m`);
 
-            console.log('001');
+            let serverFilePath = path.join(__dirname, '../../public');
 
             // 上传文件事件
             let f = await uploadFile(ctx, {
@@ -84,6 +86,25 @@ module.exports = function (router) {
 
             // 删掉上传的临时文件
             fs.unlink(f.path,()=>{});
+
+            // 计算图片特征
+            let options = {
+                method: 'get',
+                url: `${Config.server.service.uri}/image?id=${item['_id']}`,
+                json: true,
+                headers: {
+                    "content-type": "application/json",
+                },
+                body: {}
+            };
+
+            request(options, function (err, res, body) {
+                if (err) {
+                    console.log(err);
+                }else{
+                    console.log(body);
+                }
+            });
 
             ctx.body = {status:"success", code: 200, data: filename};
         }
