@@ -36,9 +36,8 @@ module.exports = function (router) {
             ctx.body = {code: 200, data: item};
         }
     });
-    // 删除视频
+    // 删除
     router.delete('/job', async(ctx) => {
-        let videoid = ctx.params.videoid;
         let items = await jobLogic.removeByIds(ctx.request.body);
         ctx.body = {code: 200};
     });
