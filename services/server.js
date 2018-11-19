@@ -31,7 +31,7 @@ app.use(views(path.join(__dirname,'./views'),{
     extension:'ejs'
 }));
 app.use(cors({credentials: true}));                         // 处理跨域(设置credentials：true,是要支持客户端跨域使用cookie)
-//app.use(async (ctx,next)=>{ctx.response.set('Accept-Ranges', "bytes"); await next();});     // 计算MP4文件头
+app.use(async (ctx,next)=>{ctx.response.set('Accept-Ranges', "bytes"); await next();});     // 计算MP4文件头
 app.use(koastatic(path.join(__dirname, './public')));       // 处理静态资源
 app.use(bodyparser());                                      // 使用ctx.body解析中间件
 app.use(consuming);                                         // 计算耗时中间件
@@ -40,7 +40,7 @@ const root = loader(path.join(__dirname, './routers/api'), '/face/api');
 app.use(root.routes()).use(root.allowedMethods());          // 加载路由
 
 let server = app.listen(config.server.face.port);           // 启动http服务
-//server.setTimeout(0);                                       // 设置没有超时时间
+server.setTimeout(0);                                       // 设置没有超时时间
 log.info({                                                  // 记录系统启动日志
     path: '~',
     type: 'start',
