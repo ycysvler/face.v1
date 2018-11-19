@@ -5,7 +5,8 @@ const fs = require('fs');
 const uuid = require('uuid');
 const path = require('path');
 const moment = require('moment');
-
+const request = require('request');
+const Config = require('../../config/config');
 const tools = require('../../utils/tools');
 const JobLogic = require('../../db/mongo/dao/job');
 const VideoKeyFrameLogic = require('../../db/mongo/dao/videokeyframe');
@@ -33,6 +34,26 @@ module.exports = function (router) {
         let ok = tools.required(ctx, ["videoid", "name", "desc"]);
         if (ok) {
             let item = await jobLogic.create(ctx.request.body);
+
+            // 查询任务
+            let options = {
+                method: 'get',
+                url: `${Config.server.service.uri}/job?id=${item['_id']}`,
+                json: true,
+                headers: {
+                    "content-type": "application/json",
+                }
+            };
+
+            request(options, function (err, res, body) {
+                if (err) {
+                    console.log(err);
+                }else{
+                    console.log(`path :\t\x1B[33m${Config.server.service.uri}/job \t \x1B[0m \x1B[36m ${body} \x1B[0m`);
+
+                }
+            });
+
             ctx.body = {code: 200, data: item};
         }
     });
