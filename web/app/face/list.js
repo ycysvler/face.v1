@@ -62,7 +62,22 @@ export default class FaceList extends React.Component {
                 </Popover>
             },
         },
-
+        {
+            title: '状态',
+            dataIndex: 'status',
+            render: (value, item) => {
+                switch(value){
+                    case 1:
+                        return <span>计算特征</span>
+                    case 2:
+                        return <span>完成</span>
+                    case -1:
+                        return <span>特征计算失败</span>
+                    default:
+                        return <span>新增</span>
+                }
+            },
+        },
         {
             title: '描述',
             dataIndex: 'desc',

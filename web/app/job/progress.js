@@ -28,6 +28,7 @@ export default class progress extends React.Component {
     }
 
     componentWillReceiveProps(newProps){
+        console.log('progress', newProps);
         if(newProps.frames.length > 0 && newProps.duration > 0){
             this.state.duration = newProps.duration;
             let items = [];

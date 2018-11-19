@@ -55,20 +55,36 @@ export default class JobList extends React.Component {
             <Collapse accordion className="collapse" onChange={this.callback}>
                 {
                     this.state.jobs.map((job, index) => {
-                        return <Panel header={job.name} key={job._id}>
+                        return <Panel header={job.name} key={job._id} >
+                            <div style={{maxHeight:300,overflow:'auto',margin:-16}}>
+                                <Row key={index}>
+                                    <Col span={4} className={'header'}>
+                                        秒
+                                    </Col>
+                                    <Col span={10}  className={'header'}>
+                                        人脸
+                                    </Col>
+                                    <Col span={10}  className={'header'}>
+                                        目标
+                                    </Col>
+                                </Row>
                             {
                                 this.state.keyFrames[job._id] ?
                                     this.state.keyFrames[job._id].map((item, index) => {
-                                        return (<Row key={index}>
-                                            <Col span={12} className="center">
+                                        return (<Row key={index} style={{borderBottom:'solid 1px #eee'}}>
+                                            <Col span={4} className="center">
+                                                {item.time}
+                                            </Col>
+                                            <Col span={10} className="center">
                                                 <img src={Config.server + "/face/api/video/source/face/" + item.res[0].frameid + "/" + item.res[0].trackid}></img>
                                             </Col>
-                                            <Col span={12} className="center">
+                                            <Col span={10} className="center">
                                                 <img src={Config.server + "/face/api/catalog/source/" + item.res[0].cid}></img>
                                             </Col>
                                         </Row>)
                                     }) : null
                             }
+                            </div>
                         </Panel>
                     })
                 }

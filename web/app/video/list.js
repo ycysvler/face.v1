@@ -4,7 +4,7 @@
 import React from 'react';
 import Config from 'config';
 import {Link} from 'react-router-dom';
-import {Layout, Popover, Modal,Upload, Table, Breadcrumb, Button, Row, Col, Input, Icon} from 'antd';
+import {Layout, Popover, Modal, Upload, Table, Breadcrumb, Button, Row, Col, Input, Icon} from 'antd';
 import {VideoStore, VideoActions} from './reflux.js';
 const {Header, Content} = Layout;
 
@@ -13,7 +13,7 @@ export default class FaceList extends React.Component {
         super(props);
         console.log('id -> ', props.match.params.id);
         this.unsubscribe = VideoStore.listen(this.onStatusChange.bind(this));
-        this.state = {cid:props.match.params.id,items: [], deleteBtnEnable: false, newItem: {},fileList:[]};
+        this.state = {cid: props.match.params.id, items: [], deleteBtnEnable: false, newItem: {}, fileList: []};
     }
 
     componentDidMount() {
@@ -43,31 +43,36 @@ export default class FaceList extends React.Component {
         {
             title: '编号',
             dataIndex: '_id',
-            width:240,
-
+            width: 240,
+            render: (text, info) => {
+                return <Link to={`/main/video/info/${info._id }/${info.name }`}>{info._id}</Link>
+            },
         },
         {
             title: '分组',
             dataIndex: 'group',
+        },
+
+        {
+            title: '名称',
+            dataIndex: 'name',
+            render: (text, info) => {
+                return <Link to={"/main/video/info/" + info._id}>{info.name}</Link>
+            },
+        },
+        {
+            title: '帧率',
+            dataIndex: 'fps',
         },
         {
             title: '描述',
             dataIndex: 'desc',
         },
         {
-            title: '名称',
-            dataIndex: 'name',
-            render: (text, info) => {return <Link to={"/main/job/" + info._id + "/" + info.name} >{info.name}</Link>},
-        },
-        {
-            title: '帧率',
-            dataIndex: 'fps',
-        },
-
-        {
             title: '更新时间',
             dataIndex: 'updatetime',
-        }];
+        }
+    ];
 
     rowSelection = {
         onChange: (selectedRowKeys, selectedRows) => {
@@ -115,11 +120,11 @@ export default class FaceList extends React.Component {
         });
     };
 
-    handleChange =(info)=>{
+    handleChange = (info) => {
         let fileList = info.fileList;
-        this.setState({ fileList:fileList});
+        this.setState({fileList: fileList});
         console.log(fileList);
-        if(info.file.status === "done"){
+        if (info.file.status === "done") {
             this.state.visible = false;
             this.state.fileList = [];
             this.state.newItem = {};
@@ -130,7 +135,7 @@ export default class FaceList extends React.Component {
     render() {
         const uploadButton = (
             <div>
-                <Icon type="plus" />
+                <Icon type="plus"/>
                 <div className="ant-upload-text">Upload</div>
             </div>
         );
@@ -139,24 +144,6 @@ export default class FaceList extends React.Component {
                     <Breadcrumb.Item>视频库管理</Breadcrumb.Item>
                     <Breadcrumb.Item>视频库</Breadcrumb.Item>
                 </Breadcrumb>
-
-                {/*<Button onClick={()=>{*/}
-                    {/*let Media = this.refs.video;*/}
-                    {/*Media.pause();*/}
-                    {/*Media.currentTime = 5.490753;*/}
-                    {/*Media.play();*/}
-
-                {/*}}>*/}
-                    {/*lalala*/}
-                {/*</Button>*/}
-
-            {/*<video id="video" ref="video" className="video-js vjs-default-skin vjs-fluid"*/}
-                   {/*style={{width:675, height:400}}*/}
-                   {/*poster="http://vjs.zencdn.net/v/oceans.png"*/}
-                   {/*controls preload="Metadata"*/}
-                   {/*data-setup='{ "html5" : { "nativeTextTracks" : false } }'>*/}
-                {/*<source src="http://localhost:4001/videos/mov_bbb.mp4" type="video/mp4"/>*/}
-            {/*</video>*/}
 
                 <Layout className="list-content">
                     <Header className="list-header">
@@ -199,19 +186,6 @@ export default class FaceList extends React.Component {
                             </Row>
                             <Row><Col span={24}>&nbsp;</Col></Row>
                             <Row >
-                                <Col offset={2} span={4} className="title">帧率</Col>
-                                <Col offset={2} span={13}>
-                                    <Input
-                                        value={this.state.newItem.fps}
-                                        onChange={(e) => {
-                                            let item = this.state.newItem;
-                                            item.fps = e.target.value;
-                                            this.setState({newItem: item});
-                                        }}/>
-                                </Col>
-                            </Row>
-                            <Row><Col span={24}>&nbsp;</Col></Row>
-                            <Row >
                                 <Col offset={2} span={4} className="title">描述</Col>
                                 <Col offset={2} span={13}>
                                     <Input
@@ -237,9 +211,6 @@ export default class FaceList extends React.Component {
                                     </Upload>
                                 </Col>
                             </Row>
-
-
-
                         </Modal>
                     </Content>
                 </Layout>

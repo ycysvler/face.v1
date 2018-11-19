@@ -133,7 +133,7 @@ export default class JobIndex extends React.Component {
                                                    poster=""
                                                    controls preload="Metadata"
                                                    data-setup='{ "html5" : { "nativeTextTracks" : false } }'>
-                                                <source src={"http://localhost:4001/videos/" + this.state.name} type="video/mp4"/>
+                                                <source src={Config.server + "/videos/" + this.state.name} type="video/mp4"/>
                                             </video>
                                         </Card>
                                     </Col>
