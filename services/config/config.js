@@ -11,8 +11,8 @@ module.exports = {
     mongodb: {
         uri: 'mongodb://192.168.31.34/',
         options: {
-            useNewUrlParser:true,
-            auto_reconnect: true,
+            //useNewUrlParser:true,
+            //auto_reconnect: true,
             poolSize: 10
         }
     },
