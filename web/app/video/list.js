@@ -43,10 +43,7 @@ export default class FaceList extends React.Component {
         {
             title: '编号',
             dataIndex: '_id',
-            width: 240,
-            render: (text, info) => {
-                return <Link to={`/main/video/info/${info._id }/${info.name }`}>{info._id}</Link>
-            },
+            width: 240
         },
         {
             title: '分组',
@@ -57,7 +54,7 @@ export default class FaceList extends React.Component {
             title: '名称',
             dataIndex: 'name',
             render: (text, info) => {
-                return <Link to={"/main/video/info/" + info._id}>{info.name}</Link>
+                return <Link to={`/main/video/info/${info._id }/${info.name }`}>{info.name}</Link>
             },
         },
         {

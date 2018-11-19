@@ -31,7 +31,7 @@ app.use(views(path.join(__dirname,'./views'),{
     extension:'ejs'
 }));
 app.use(cors({credentials: true}));                         // 处理跨域(设置credentials：true,是要支持客户端跨域使用cookie)
-app.use(async (ctx,next)=>{ctx.response.set('Accept-Ranges', "bytes"); await next();});     // 计算MP4文件头
+//app.use(async (ctx,next)=>{ctx.response.set('Accept-Ranges', "bytes"); await next();});     // 计算MP4文件头
 app.use(koastatic(path.join(__dirname, './public')));       // 处理静态资源
 app.use(bodyparser());                                      // 使用ctx.body解析中间件
 app.use(consuming);                                         // 计算耗时中间件

@@ -5,13 +5,36 @@ import propx from '../http/proxy';
 const FaceActions = Reflux.createActions([
         'list',
         'add',
-        'delete'
+        'delete',
+        'group'
     ]
 );
 
 const FaceStore = Reflux.createStore({
     listenables: [FaceActions],
 
+    //获取分组列表
+    onGroup: function (pageIndex, pageSize) {
+        let self = this;
+        let url = Config.server + "/face/api/catalog";
+
+        let param = {};
+
+        propx.get(url, param, (code, data) => {
+            console.log(url, JSON.stringify(param));
+
+            let total = 0;
+            // 没有数据
+            if (data.statusCode === 404) {
+                self.items = [];
+            }
+            else {
+                self.items = data.data;
+            }
+
+            self.trigger('group', {total: self.items.length, list: self.items, param: param});
+        });
+    },
     //获取列表
     onList: function (cid) {
         let self = this;
@@ -20,8 +43,6 @@ const FaceStore = Reflux.createStore({
         let param = {};
 
         propx.get(url, param, (code, data) => {
-            console.log(url, JSON.stringify(param));
-
             let total = 0;
             // 没有数据
             if (data.statusCode === 404) {
