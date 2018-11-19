@@ -44,12 +44,12 @@ module.exports = function (router) {
                     "content-type": "application/json",
                 }
             };
-
+            console.log(`call python :\t\x1B[33m${Config.server.service.uri}/job?id=${item['_id']} \t \x1B[0m \x1B[36m  \x1B[0m`);
             request(options, function (err, res, body) {
                 if (err) {
                     console.log(err);
                 }else{
-                    console.log(`path :\t\x1B[33m${Config.server.service.uri}/job \t \x1B[0m \x1B[36m ${body} \x1B[0m`);
+                    console.log(`python response :\t\x1B[33m${Config.server.service.uri}/job \t \x1B[0m \x1B[36m ${body} \x1B[0m`);
 
                 }
             });
