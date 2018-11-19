@@ -40,7 +40,7 @@ const root = loader(path.join(__dirname, './routers/api'), '/face/api');
 app.use(root.routes()).use(root.allowedMethods());          // 加载路由
 
 let server = app.listen(config.server.face.port);           // 启动http服务
-server.setTimeout(0);                                       // 设置没有超时时间
+//server.setTimeout(0);                                       // 设置没有超时时间
 log.info({                                                  // 记录系统启动日志
     path: '~',
     type: 'start',
