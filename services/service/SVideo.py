@@ -41,11 +41,7 @@ class VideoService:
                 self.pip_service.send({"code":404})
                 continue
 
-            # git fps
-            fpsfile = str(os.path.dirname(os.path.realpath(__file__)) + "/video/" + str(item["_id"]) + "/fps.txt")
-    	    file = open(fpsfile, 'rw+')
-            self.fps = float(file.readline())
-            file.close()
+           
 
             pic_save_dir = str(os.path.dirname(os.path.realpath(__file__)) + "/video/" + str(item["_id"]) + "/")
             print 'video service > work >', '\033[1;32m pic_save_dir : '+ pic_save_dir +' \033[0m'
@@ -56,8 +52,14 @@ class VideoService:
 
             face_analyzer.input(videopath,pic_save_dir,6)
             face_analyzer.process()
-
-            self.adapter(pic_save_dir, item, item['name'], classifier) 
+            
+            # git fps
+            fpsfile = str(os.path.dirname(os.path.realpath(__file__)) + "/video/" + str(item["_id"]) + "/fps.txt")
+    	    file = open(fpsfile, 'rw+')
+            self.fps = float(file.readline())
+            file.close()
+            # 计算关键帧
+	    self.adapter(pic_save_dir, item, item['name'], classifier) 
 
             print 'video service > work >', '\033[1;32m fps : '+ str(self.fps) +' \033[0m'
             mongodb.db('').videos.update({'_id':ObjectId(params["id"])},{'$set':{'status':2, "fps":self.fps}})

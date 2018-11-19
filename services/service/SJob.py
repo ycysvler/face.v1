@@ -63,7 +63,7 @@ class JobService:
                    for image in images:
                        result = classifier.recognize(face['feature'], image['feature'])
                        print 'job service > work >', '\033[1;32m feature like ['+ str(result) +']  !\033[0m'
-                       res.append({"trackid":face["trackid"], "cid":image["_id"]})
+                       res.append({"frameid":frame["_id"], "trackid":face["trackid"], "cid":image["_id"]})
 
                 keyframe = {'jobid':jobid, 'frameno':frame['frameno']}
                 keyframe['time'] = int(frame['frameno']/video['fps'])
