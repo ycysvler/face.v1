@@ -37,10 +37,10 @@ module.exports = function (router) {
         }
     });
     // 删除视频
-    router.delete('/job/:videoid', async(ctx) => {
+    router.delete('/job', async(ctx) => {
         let videoid = ctx.params.videoid;
-        let items = await jobLogic.removeByIds([videoid]);
-        ctx.body = {code: 200, data: items};
+        let items = await jobLogic.removeByIds(ctx.request.body);
+        ctx.body = {code: 200};
     });
 
     // 获取关键帧列表
