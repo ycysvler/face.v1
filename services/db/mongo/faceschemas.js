@@ -70,6 +70,7 @@ module.exports = class Schemas {
         this.videoKeyFrameSchema = new mongoose.Schema({
             jobid: {type: String, index: true},                             // JobID
             frameno: {type: Number},                                        // 帧号
+            score:{type:Number},                                            // 相似度
             time: {type: Number},                                           // 这一帧所在的时间：秒
             res : Array                                                     // [frameid, trackid, cid 人物图像ID]
         });
