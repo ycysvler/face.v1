@@ -14,7 +14,7 @@ const JobActions = Reflux.createActions([
 
 const JobStore = Reflux.createStore({
     listenables: [JobActions],
-    onList:function(videoId){
+    onList: function (videoId) {
         let self = this;
         let url = Config.server + "/face/api/job/" + videoId;
 
@@ -33,7 +33,7 @@ const JobStore = Reflux.createStore({
             self.trigger('list', {total: self.items.length, list: self.items, param: param});
         });
     },
-    onAdd:function(item){
+    onAdd: function (item) {
         let self = this;
         let url = Config.server + "/face/api/job";
 
@@ -41,10 +41,10 @@ const JobStore = Reflux.createStore({
 
         propx.post(url, param, (code, data) => {
             console.log(url, JSON.stringify(param));
-            self.trigger('add', {data:data, param: param});
+            self.trigger('add', {data: data, param: param});
         });
     },
-    onDelete:function(ids){
+    onDelete: function (ids) {
         let self = this;
         let url = Config.server + "/face/api/job";
 
@@ -52,11 +52,11 @@ const JobStore = Reflux.createStore({
 
         propx.delete(url, param, (code, data) => {
             console.log(url, JSON.stringify(param));
-            self.trigger('delete', {data:data, param: param});
+            self.trigger('delete', {data: data, param: param});
         });
     },
 
-    onSourceKeyList:function(jobId){
+    onSourceKeyList: function (jobId) {
         let self = this;
         let url = Config.server + "/face/api/job/key/frame/" + jobId;
 
@@ -64,19 +64,20 @@ const JobStore = Reflux.createStore({
 
         propx.get(url, param, (code, data) => {
             let total = 0;
-            // 没有数据
-            if (data.statusCode === 404) {
-                self.items = [];
-            }
-            else {
-                self.items = data.data;
-            }
+            let keyFrames = [];
 
-            self.trigger('sourceKeyList', {total: self.items.length, list: self.items, param: param});
+            data.data.map((item) => {
+                item.res.map((res) => {
+                    let frame = {frameno: item.frameno, time: item.time, ...res};
+                    keyFrames.push(frame);
+                });
+            });
+            console.log('onSourceKeyList', keyFrames);
+            self.trigger('sourceKeyList', {total: self.items.length, list: keyFrames, param: param});
         });
     },
 
-    onSourceFrameList:function(videoId){
+    onSourceFrameList: function (videoId) {
         let self = this;
         let url = Config.server + "/face/api/video/source/frame/" + videoId;
 
@@ -96,7 +97,7 @@ const JobStore = Reflux.createStore({
         });
     },
 
-    onSourceFrameInfo:function(frameId){
+    onSourceFrameInfo: function (frameId) {
         let self = this;
         let url = Config.server + "/face/api/video/source/frame/info/" + frameId;
 

@@ -19,25 +19,23 @@ export default class VideoInfo extends React.Component {
             id: props.match.params.id,
             name: props.match.params.name,
             sourceFrameInfo: {},
-            items: [],
             frames: [],
             videoDuration: 0,
             videoWidth: videoWidth,
             videoHeight: videoHeight,
-            deleteBtnEnable: false,
             newItem: {},
-            fileList: []
+
         };
     }
 
     componentDidMount() {
-        //VideoActions.sourceFrameList(this.state.id);
+        VideoActions.sourceFrameList(this.state.id);
 
         let Media = this.refs.video;
         // 加载视频完成，能得到视频时长
         Media.onloadedmetadata = () => {
             let time = parseInt(Media.duration);
-            //this.setState({videoDuration: time});
+            this.setState({videoDuration: time});
         };
         // 播放进度变化
         Media.ontimeupdate = (e) => {
@@ -52,7 +50,7 @@ export default class VideoInfo extends React.Component {
     onStatusChange = (type, data) => {
         if (type === 'sourceFrameList') {
             console.log('sourceFrameList', data);
-            this.setState({frames: data.list, deleteBtnEnable: false, total: data.total});
+            this.setState({frames: data.list, total: data.total});
         }
         if (type === 'sourceFrameInfo') {
             console.log('sourceFrameInfo', data.data);
@@ -138,7 +136,7 @@ export default class VideoInfo extends React.Component {
                 </div>
             </div>
             <div className="job">
-                <JobList videoid={this.state.id}/>
+                <JobList onProgress={this.onProgress} videoid={this.state.id}/>
             </div>
         </div>);
     }
